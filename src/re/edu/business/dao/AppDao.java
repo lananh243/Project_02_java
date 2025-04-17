@@ -1,4 +1,4 @@
 package re.edu.business.dao;
 
-public class Demo {
+public interface AppDao<T> {
 }
