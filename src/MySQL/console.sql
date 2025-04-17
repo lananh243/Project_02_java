@@ -21,7 +21,7 @@ end ;
 delimiter //
 
 create table Product (
-     pro_id char(10) primary key,
+     pro_id int primary key auto_increment,
      pro_name varchar(100) not null,
      brand varchar(50) not null,
      price decimal(12,2) not null,
@@ -45,6 +45,8 @@ begin
     select * from Product;
 end ;
 delimiter //
+
+
 
 create table Customer (
       customer_id char(20) primary key,

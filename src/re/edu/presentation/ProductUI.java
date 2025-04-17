@@ -47,21 +47,33 @@ public class ProductUI {
 
     public void displayListProduct() {
         List<Product> listProducts = productService.findAll();
-        listProducts.forEach(System.out::println);
+        if (listProducts.isEmpty()) {
+            System.err.println("Danh sách sản phẩm chưa có sản phẩm nào");
+        } else {
+            System.out.println("\u001B[34m ============= DANH SÁCH SẢN PHẨM ===================\u001B[0m");
+            listProducts.forEach(System.out::println);
+        }
+
     }
 
     public void createProduct(Scanner scanner) {
         System.out.println("Nhập vfao số lượng sản phẩm cần thêm mới: ");
         int size = Integer.parseInt(scanner.nextLine());
+        boolean allAdded = true;
         for (int i = 0; i < size; i++) {
+            System.out.println("=== Nhập thông tin sản phẩm thứ " + (i + 1) + " ===");
             Product product = new Product();
             product.inputData(scanner);
-            boolean result = productService.addProduct(product);
-            if (result) {
-                System.out.println("Thêm mới thành công");
-            } else {
-                System.err.println("Có lỗi trong quá trình thêm mới");
+
+            if (!productService.addProduct(product)) {
+                allAdded = false;
             }
+        }
+
+        if (allAdded) {
+            System.out.println("Thêm mới sản phẩm thành công!");
+        } else {
+            System.err.println("Có lỗi xảy ra khi thêm sản phẩm.");
         }
     }
 }

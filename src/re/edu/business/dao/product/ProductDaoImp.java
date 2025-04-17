@@ -51,25 +51,18 @@ public class ProductDaoImp implements ProductDao{
         List<Product> products = new ArrayList<>();
         try {
             conn = ConnectionDB.openConnection();
-            conn.setAutoCommit(false);
             callSt = conn.prepareCall("{call get_all_product()}");
             ResultSet rs = callSt.executeQuery();
             while (rs.next()) {
                 Product product = new Product();
-                product.setName(rs.getString("name"));
+                product.setName(rs.getString("pro_name"));
                 product.setBrand(rs.getString("brand"));
                 product.setPrice(rs.getDouble("price"));
                 product.setStock(rs.getInt("stock"));
                 products.add(product);
-                conn.commit();
             }
         }catch (SQLException e){
-            System.err.println("Có lỗi sảy ra trong quá trình lấy ra sản phẩm, dữ liệu đã được rollback");
-            try {
-                conn.rollback();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            System.err.println("Có lỗi sảy ra trong quá trình lấy ra sản phẩm" + e.getMessage());
         } catch (Exception e) {
             System.err.println("Có lỗi không xác định khi làm việc với db: " + e.getMessage());
         } finally {
