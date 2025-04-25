@@ -1,8 +1,13 @@
 package re.edu.validate;
 
+import re.edu.business.dao.customer.CustomerDao;
+import re.edu.business.dao.customer.CustomerDaoImp;
+
 import java.util.Scanner;
 
 public class CustomerValidator {
+    public static final CustomerDao customerDao = new CustomerDaoImp();
+
     public static String validateName(Scanner scanner, String message, StringRule stringRule) {
         System.out.println(message);
         while (true) {
@@ -30,11 +35,35 @@ public class CustomerValidator {
                  System.err.println("Bạn chưa nhập email của khách hàng, vui lòng nhập lại");
                  continue;
              }
-             if (Validator.isValidEmail(email)) {
-                 return email;
+             if (!Validator.isValidEmail(email)) {
+                 System.err.println("Không đúng đinh dạng email, vui lòng nhập lại");
+                 continue;
              }
-             System.err.println("Không đúng đinh dạng email, vui lòng nhập lại");
+
+             if (customerDao.isEmailDuplicate(email)) {
+                 System.err.println("Email đã tồn tại trong hệ thống, vui lòng nhập lại");
+                 continue;
+             }
+             return email;
          }
+    }
+
+
+    public static String validateSearchEmail(Scanner scanner, String message, StringRule stringRule) {
+        System.out.println(message);
+        while (true) {
+            String email = scanner.nextLine().trim();
+
+            if (email.isEmpty()) {
+                System.err.println("Bạn chưa nhập email của khách hàng, vui lòng nhập lại");
+                continue;
+            }
+            if (!Validator.isValidEmail(email)) {
+                System.err.println("Không đúng đinh dạng email, vui lòng nhập lại");
+                continue;
+            }
+            return email;
+        }
     }
 
     public static String validatePhone(Scanner scanner, String message, StringRule stringRule) {
@@ -46,10 +75,16 @@ public class CustomerValidator {
                 continue;
             }
 
-            if (Validator.isValidPhoneNumberVN(inputPhone)) {
-                return inputPhone;
+            if (!Validator.isValidPhoneNumberVN(inputPhone)) {
+                System.err.println("Không đúng số điện thoại di động Việt Nam, vui lòng nhập lại");
+                continue;
             }
-            System.err.println("Không đúng số điện thoại di động Việt Nam, vui lòng nhập lại");
+
+            if (customerDao.isPhoneDuplicate(inputPhone)) {
+                System.err.println("Số điện thoại đã tồn tại trong hệ thống, vui lòng nhập số khác");
+                continue;
+            }
+            return inputPhone;
         }
     }
 
@@ -58,7 +93,8 @@ public class CustomerValidator {
         while (true) {
             String inputAddress = scanner.nextLine().trim();
             if (inputAddress.isEmpty()) {
-                System.err.println("Bạn chưa nhập địachir, vui lòng nhập lại");
+                System.err.println("Bạn chưa nhập địa chỉ, vui lòng nhập lại");
+                continue;
             }
 
             if (!stringRule.isValidString(inputAddress)) {
@@ -69,4 +105,26 @@ public class CustomerValidator {
             return inputAddress;
         }
     }
+
+    public static int validateStatusCus(Scanner scanner, String message) {
+        System.out.println(message);
+        while (true) {
+            String value = scanner.nextLine().trim();
+            if (value.isEmpty()) {
+                System.err.println("Trạng thái của khách hàng không để trống, vui lòng nhập lại");
+                continue;
+            }
+
+            try {
+                int status = Integer.parseInt(value);
+                if (status == 0 || status == 1) {
+                    return status;
+                }
+                System.err.println("Trạng thái của khách hàng phải nhập là 0 hoặc 1, vui lòng nhập lại");
+            } catch (NumberFormatException e) {
+                System.err.println("Trạng thái của sản phẩm không phải là số nguyên, vui lòng nhập lại");
+            }
+        }
+    }
+
 }

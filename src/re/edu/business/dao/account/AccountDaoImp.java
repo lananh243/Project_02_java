@@ -1,6 +1,7 @@
 package re.edu.business.dao.account;
 
 import re.edu.business.config.ConnectionDB;
+import re.edu.business.model.Account;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -9,7 +10,7 @@ import java.sql.SQLException;
 
 public class AccountDaoImp implements AccountDao {
     @Override
-    public boolean logIn(String username, String password) {
+    public Account logIn(String username, String password) {
         Connection conn = null;
         CallableStatement callSt = null;
 
@@ -21,11 +22,11 @@ public class AccountDaoImp implements AccountDao {
 
             ResultSet rs = callSt.executeQuery();
             if (rs.next()) {
-                System.out.println("Đăng nhập thành công! Xin chào, " + rs.getString("username"));
-                return true;
-            } else {
-                System.err.println("Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập hoặc mật khẩu.");
-                return false;
+                Account account = new Account();
+                account.setAcc_id(rs.getInt("id"));
+                account.setUsername(rs.getString("username"));
+                account.setPassword(rs.getString("password"));
+                return account;
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi truy vấn cơ sở dữ liệu: " + e.getMessage());
@@ -34,6 +35,6 @@ public class AccountDaoImp implements AccountDao {
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
-        return false;
+        return null;
     }
 }

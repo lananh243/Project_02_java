@@ -2,8 +2,10 @@ package re.edu.business.service.account;
 
 import re.edu.business.dao.account.AccountDao;
 import re.edu.business.dao.account.AccountDaoImp;
+import re.edu.business.model.Account;
 
 public class AccountServiceImp implements AccountService {
+    public static Account userLogin;
     private final AccountDao accountDao;
 
     public AccountServiceImp() {
@@ -12,6 +14,11 @@ public class AccountServiceImp implements AccountService {
 
     @Override
     public boolean logIn(String username, String password) {
-        return accountDao.logIn(username, password);
+        Account account = accountDao.logIn(username, password);
+        if (account != null) {
+            userLogin = account;
+            return true;
+        }
+        return false;
     }
 }

@@ -2,6 +2,8 @@ package re.edu.validate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Validator {
@@ -18,37 +20,92 @@ public class Validator {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return inputValueEmail != null && Pattern.matches(emailRegex, inputValueEmail.trim());
     }
-    public static <T> boolean isValidDataType(String value, Class<T> type) {
-        try {
-            if (type == Integer.class) {
-                Integer.parseInt(value);
-            } else if (type == Double.class) {
-                Double.parseDouble(value);
-            } else if (type == Float.class) {
-                Float.parseFloat(value);
-            } else if (type == Boolean.class) {
-                Boolean.parseBoolean(value.toLowerCase());
-            } else if (type == LocalDate.class) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate.parse(value, formatter);
-            } else if (type.isEnum()) {
-                parseEnumValue(value, type);
-            } else {
-                throw new UnsupportedOperationException("Không hỗ trợ kiểu dữ liệu " + type.getName());
+
+    public static Integer validateInputInteger(Scanner scanner, String message) {
+        System.out.println(message);
+        while (true) {
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.err.println("Dữ liệu không được để trống. Vui lòng nhập lại.");
+                continue;
             }
-            return true;
-        } catch (Exception e) {
-            return false;
+
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.err.println("Dữ liệu nhập vào không phải là kiểu số nguyên, vui lòng nhập lại");
+            }
+
         }
     }
 
-    public static <T> boolean parseEnumValue(String value, Class<?> type) {
-        Class<? extends Enum> enumType = (Class<? extends Enum>) type;
-        for (Enum constant : enumType.getEnumConstants()) {
-            if (value.equalsIgnoreCase(constant.name())) {
-                return true;
+    public static boolean validateInputBoolean(Scanner scanner, String message) {
+        while (true) {
+            System.out.println(message);
+            try {
+                String inputString = scanner.nextLine();
+                if (inputString.equalsIgnoreCase("true") || inputString.equalsIgnoreCase("false")) {
+                    return Boolean.parseBoolean(inputString);
+                }
+
+                throw new IllegalArgumentException("Dữ liệu nhập vào không phải true | false , vui lòng nhập lại");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
-        return false;
+    }
+
+    public static <T extends Enum<T>> T validateEnumInput(Scanner scanner, String message, Class<T> enumClass) {
+        System.out.println(message);
+        while (true) {
+            String input = scanner.nextLine().trim();
+            for (T value : enumClass.getEnumConstants()) {
+                if (value.name().equalsIgnoreCase(input)) {
+                    return value;
+                }
+            }
+            System.err.println("Giá trị nhập vào không hợp lệ, vui lòng nhập lại");
+        }
+    }
+
+    public static LocalDate validateInputDate(Scanner scanner, String message) {
+        System.out.println(message);
+        do {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            try {
+                return LocalDate.parse(scanner.nextLine(), dtf);
+            } catch (DateTimeParseException e) {
+                System.err.println("Không đúng định dạng ngày tháng năm, vui lòng nhập lại");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } while (true);
+    }
+
+    public static LocalDate validateInputMonthYear(Scanner scanner, String message) {
+        System.out.println(message);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/yyyy");
+        while (true) {
+            String input = scanner.nextLine().trim();
+            try {
+                return LocalDate.parse("01/" + input, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (DateTimeParseException e) {
+                System.err.println("Không đúng định dạng tháng năm, vui lòng nhập lại (MM/yyyy):");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    public static String validateInputString(Scanner scanner, String message) {
+        System.out.println(message);
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) {
+                System.err.println("Dữ liệu không được để trống, vui lòng nhập lại");
+                continue;
+            }
+            return input;
+        }
     }
 }

@@ -3,6 +3,7 @@ package re.edu.presentation;
 import re.edu.business.model.Account;
 import re.edu.business.service.account.AccountService;
 import re.edu.business.service.account.AccountServiceImp;
+import re.edu.validate.Validator;
 
 import java.util.Scanner;
 
@@ -14,17 +15,20 @@ public class AccountUI {
 
         do {
             System.out.println("\u001B[34m ======================= HỆ THỐNG QUẢN LÝ CỬA HÀNG =====================\u001B[0m");
-            System.out.println("\u001B[34m 1. Đăng nhập Admin\u001B[0m");
-            System.out.println("\u001B[34m 2. Thoát\u001B[0m");
+            System.out.println("\u001B[33m |   1. Đăng nhập Admin                                                |\u001B[0m");
+            System.out.println("\u001B[33m |   2. Thoát                                                          |\u001B[0m");
             System.out.println("\u001B[34m =======================================================================\u001B[0m");
-            int choice = ChoiceValidator.validateChoice(scanner);
+            int choice = Validator.validateInputInteger(scanner, "Lựa chọn của bạn là: ");
 
             switch (choice) {
                 case 1:
-                    boolean loginSuccess = logIn(scanner, accountService);
-                    if (loginSuccess) {
+                    if (logIn(scanner, accountService)) {
+                        System.out.println("Đăng nhập thành công, Xin chào " + AccountServiceImp.userLogin.getUsername());
                         return true;
+                    } else {
+                        System.err.println("Tên người dùng hoặc mật khẩu sai, Vui lòng đăng nhập lại");
                     }
+                    break;
                 case 2:
                     System.exit(0);
                 default:

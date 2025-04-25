@@ -7,19 +7,21 @@ import re.edu.validate.StringRule;
 import java.util.Scanner;
 
 public class Account implements IApp {
-    private static int auto_incrementId = 0;
     private int acc_id;
     private String username;
     private String password;
 
     public Account() {
-        this.acc_id = ++auto_incrementId;
     }
 
-    public Account(String username, String password) {
-        this.acc_id = ++auto_incrementId;
+    public Account(int acc_id, String username, String password) {
+        this.acc_id = acc_id;
         this.username = username;
         this.password = password;
+    }
+
+    public void setAcc_id(int acc_id) {
+        this.acc_id = acc_id;
     }
 
     public int getAcc_id() {
